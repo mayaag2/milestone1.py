@@ -1,0 +1,218 @@
+def dna_count(dna):
+    """This function takes in a string representing a DNA sequence and returns a list or
+tuple of four integers representing the number of times each nucleotide A, C, G, or T occur
+in the DNA string, in that order. """
+    
+    dna=dna.upper() #convert string to uppercase
+    count = {} #empty dictionary
+    
+    for symbol in dna:
+        if symbol not in count:
+            count[symbol]=0 #create new dictionary pair with key “symbol”
+        count[symbol]=count[symbol]+1 #add one to count
+    return count
+
+def dna2rna(dna):
+    """This function takes in a string representing a DNA sequence and returns the transcribed RNA string. DNA sequences are transcribed to RNA sequences by replacing all occurrences of the "T" nucleotides with "U"."""
+    
+    dna=dna.upper() #convert to uppercase
+    rna = '' #create empty string rna
+    
+    for symbol in dna: #add transcribed dna to empty string rna for all symbols
+        if symbol == 'T':
+            rna = rna + 'U' 
+        elif symbol == 'A':
+            rna = rna + 'A'
+        elif symbol == 'C':
+            rna = rna +'C'
+        elif symbol == 'G':
+            rna = rna +'G'
+    return rna
+
+def reverse_complement(dna):
+    '''This function takes in a string representing a DNA sequence and returns the reverse complement as a new string. The reverse complement of a DNA string is formed by reversing the entire string, and then taking the complement of each nucleotide. Recall from Lab03 that "A" and "T" are complements of each other, as are "C" and "G". '''
+    dna=dna.upper() #convert string to uppercase
+    complement=""
+    r_dna=dna[::-1] #reverse string “dna”
+    #add complements of reversed dna to empty string complement for all symbols    
+    for symbol in r_dna: 
+        if symbol == "A":
+            complement = complement+"T"
+        elif symbol == "T":
+            complement = complement+"A"
+        elif symbol == "C":
+            complement = complement+"G"
+        elif symbol == "G":
+            complement = complement+"C"
+    return complement
+
+
+
+def mendels_law(hom, het, rec):
+    ''' This function returns the probability an offspring will possess a 
+dominant allele depending on how many input homozygous dominant,
+heterozygous, and homozygous recessive parents exist. '''
+
+    #computes total number of parents randomly chosen from
+    total=hom+het+rec
+    
+    #probability first then second parent is homozygous recessive
+    rec_rec=(rec/total)*((rec-1)/(total-1))
+    #probability first then second parent is heterozygous
+    het_het=(het/total)*((het-1)/(total-1))
+    #probability one parent is homozygous recessive and other is
+    #heterozygous by adding probability for either order randomly chosen
+    het_rec=(rec/total)*(het/(total-1))+(het/total)*(rec/(total-1))
+    
+    #combines probabilities of having a recessive allele
+    probability_rec=rec_rec+het_het*0.25+het_rec*0.5
+    
+    #returns probability of dominant allele using complement of recessive allele's probability
+    return (1-probability_rec)
+
+def fibonacci_rabbits(n, k):
+    '''This function returns the total number of rabbit pairs whose population
+    follows the fibonacci sequence when given a litter size for each rabbit pair
+    after a given number of months'''
+    
+    #total pair of rabbits after first two months is 1
+    f1, f2 = 1, 1
+    #loop to add litter each month after the first month
+    for i in range(n - 1):
+        #set old f1 value (total rabbit pairs that included previous month's litter)
+        #as the new f2 value, and then uses what used to be f2 for computing the
+        #next litter to add to f1 for the new f1 value
+        f2, f1 = f1, f1 + (f2 * k)
+        
+    #return total after n next month's new litter since it is "after n months"
+    return f2
+
+def GC_content(dna_list):
+    #This function takes in a list of DNA strings and returns the index of the DNA string with the highest GC-content and its GC-content percentage as a tuple. The GC-content of a DNA string is the percentage of nucleotides in the string that are "C" or "G".
+  
+    for dna in dna_list:
+        b = 0
+        l = [] #Declares an empty list 
+
+        #If the percentage is greater than b it will enter the if loop, if not it will continue
+        if (dna.count('C')+dna.count('G'))/len(dna) > b:
+            a = dna_list.index(dna) #Finds index
+            b = (dna.count('C')+dna.count('G'))/len(dna) #Finds the percentage
+
+            l.extend([a,round(b*100,6)]) #The extend function will append multiple values at a time 
+    return tuple(l)
+
+def sub_rna2codon(triplet):  #subfunction used in rna2codon below
+    genetic_code = {
+        'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L',        'CUU': 'L', 'CUC': 'L', 'CUA': 'L', 'CUG': 'L',
+        'AUU': 'I', 'AUC': 'I', 'AUA': 'I', 'AUG': 'M',        'GUU': 'V', 'GUC': 'V', 'GUA': 'V', 'GUG': 'V',
+
+        'UCU': 'S', 'UCC': 'S', 'UCA': 'S', 'UCG': 'S',        'CCU': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
+        'ACU': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',        'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
+
+        'UAU': 'Y', 'UAC': 'Y', 'UAA': '*', 'UAG': '*',        'CAU': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q',
+        'AAU': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K',        'GAU': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E',
+
+        'UGU': 'C', 'UGC': 'C', 'UGA': '*', 'UGG': 'W',        'CGU': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
+        'AGU': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',        'GGU': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G',
+    }
+    triplet = triplet.upper()
+    if triplet in genetic_code:
+        amino = genetic_code.get(triplet)
+    else:
+        amino = "Invalid"
+    return amino
+
+def rna2codon(rna):
+    '''This function takes in a string representing an RNA sequence, and returns the corresponding amino acid string, as transcribed by this codon table. You do not need to transcribe the stop codon.'''
+    
+    amino = ''
+    genetic_code = {
+        'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L',        'CUU': 'L', 'CUC': 'L', 'CUA': 'L', 'CUG': 'L',
+        'AUU': 'I', 'AUC': 'I', 'AUA': 'I', 'AUG': 'M',        'GUU': 'V', 'GUC': 'V', 'GUA': 'V', 'GUG': 'V',
+
+        'UCU': 'S', 'UCC': 'S', 'UCA': 'S', 'UCG': 'S',        'CCU': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
+        'ACU': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',        'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
+
+        'UAU': 'Y', 'UAC': 'Y', 'UAA': '*', 'UAG': '*',        'CAU': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q',
+        'AAU': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K',        'GAU': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E',
+
+        'UGU': 'C', 'UGC': 'C', 'UGA': '*', 'UGG': 'W',        'CGU': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
+        'AGU': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',        'GGU': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G',
+    }
+    for i in range( 0,int( len( rna ) / 3 ) ): #range so returned string’s length is length of rna/3
+        amino += sub_rna2codon(rna[ 3*i:3*i+3 ]) #convert string of triplets to string of amino acids
+    return amino.strip("*") #remove stop codon (*) from output
+
+def locate_substring(dna_snippet, dna):
+    """This function takes in two strings, dna_snippet and dna, where dna_snippet is a substring of dna, and returns all locations of the substring as a list of integers. In other words, dna_snippet may exist in multiple locations within dna; you should return the beginning index position of each occurrence of dna_snippet inside of dna."""
+
+    l1 = []
+    length = len(dna)
+    index = 0
+    
+    while index < length:
+        i = dna.find(dna_snippet, index)
+        if i == -1: #return if snippet is not in string OR at end of string
+            return l1 #final list
+        
+        l1.append(i) #add location where string appears to list
+        index = i + 1 #iterates
+    return l1
+
+def hamming_dist(dna1, dna2):
+    """This function takes in two strings representing DNA sequences of equal length and returns the Hamming distance between the two strings as an integer. The Hamming distance is the number of corresponding symbols in the same position that differ between two sequences. In other words, the function counts the differences between two DNA sequences."""
+
+    i=0 
+    flag= 0 
+
+    while i < len(dna1): 
+         #If the index of dna1 is not equal to the index of dna2, when they are at the same length, then it will add one to the flag count, if they are the same, the code analyzes the next letter
+        if dna1[i] != dna2[i]:
+            flag=flag+1 
+        i=i+1 
+    return flag
+
+def count_dom_phenotype(genotypes):
+    # This function takes in a list of six nonnegative integers corresponding to the number of couples in a population possessing a specific genotype pairing and returns the expected number of offspring displaying the dominant phenotype in the next generation, assuming every couple has exactly the two offspring.
+
+#multiplied by percentage of dominant traits using punnett square   
+    AA_AA = 2*(genotypes[0]*1)  
+    AA_Aa = 2*(genotypes[1]*1)
+    AA_aa = 2*(genotypes[2]*1)
+    Aa_Aa = 2*(genotypes[3]*0.75)
+    Aa_aa = 2*(genotypes[4]*0.5)
+    aa_aa = 2*(genotypes[5]*0)
+    
+    sum_genotypes = AA_AA + AA_Aa + AA_aa + Aa_Aa +Aa_aa +aa_aa
+    
+    return sum_genotypes
+
+def source_rna(protein):
+    """This function takes in a string representing a sequence of proteins and returns the total number of different source RNA strings, modulo 1,000,000. Essentially, you are calculating how many strands of mRNA from which this particular protein could have been translated. """
+
+    protein = protein.upper() #convert to uppercase
+    combinations_producing = { #combinations of rna string that produce a given amino acid
+        "F":2, "L":6,
+        "I":3, "M":1, "V":4,
+
+        "S":6, "P":4,
+        "T":4, "A":4,
+
+        "Y":2, "H":2, 'Q':2,
+        "N":2, "K":2, 'D':2,'E':2,
+
+        "C":2, 'W':1, "R":6,
+        "G":4,
+    }
+    x=3 #3 stop codons
+
+    for letter in protein:
+        x = combinations_producing[letter]*x #combinations are multiplicative
+    return x%1000000
+
+def splice_rna(dna, intron_list):
+
+
+
+
